@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Pre-Trillions Score</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+  <header class="site-header">
+    <h1>YOUR PRE-TRILLIONS SCORE</h1>
+  </header>
+
+  <main class="hero">
+    <section class="left-panel">
+      <div class="demo-wrap" id="demoWrap">
+        <div class="demo-card" id="demoCard">
+          <div class="demo-badge">1000</div>
+          <div class="demo-screen">
+            <div class="scanline"></div>
+            <div class="grid"></div>
+          </div>
+        </div>
+      </div>
+      <p class="lead caps">CREATE YOUR SCORE NOW, GET YOUR UNIQUE ACHIEVEMENTS!</p>
+      <button class="cyber-btn" id="ctaBtn">
+        <span>CREATE MY SCORE CARD</span>
+      </button>
+    </section>
+
+    <section class="right-panel">
+      <div class="slider" id="slider">
+        <div class="r-card active">Card 1</div>
+        <div class="r-card">Card 2</div>
+        <div class="r-card">Card 3</div>
+        <div class="r-card">Card 4</div>
+        <div class="r-card">Card 5</div>
+      </div>
+    </section>
+  </main>
+
+  <div class="spacer"></div>
+
+  <section class="how reveal-group" id="how">
+    <h3 class="reveal">How it works</h3>
+    <div class="steps">
+      <div class="step reveal"><span class="step-num">1</span><p>Enter nickname</p></div>
+      <div class="step reveal"><span class="step-num">2</span><p>Enter your wallet</p></div>
+      <div class="step reveal"><span class="step-num">3</span><p>Mint your Score Card</p></div>
+    </div>
+  </section>
+
+  <footer class="site-footer reveal-group" id="footer">
+    <div class="links">
+      <a class="link-btn reveal" href="https://plasma.to/" target="_blank" rel="noreferrer">Website</a>
+      <a class="link-btn reveal" href="https://x.com/PlasmaFDN" target="_blank" rel="noreferrer">Twitter</a>
+      <a class="link-btn reveal" href="https://discord.gg/plasmafdn" target="_blank" rel="noreferrer">Discord</a>
+      <a class="link-btn reveal" href="https://docs.plasma.to/" target="_blank" rel="noreferrer">Docs</a>
+    </div>
+    <p class="made-with reveal" id="madeWith">Build for Plasma with <span class="love">Love</span></p>
+  </footer>
+
+  <!-- Wizard modal -->
+  <div id="wizard" class="wizard hidden" aria-hidden="true">
+    <div class="wizard-panel">
+      <button class="wizard-close" id="wClose" aria-label="Close">×</button>
+
+      <!-- Step 1: basic form (Nick + Wallet under it + Avatar) -->
+      <div class="wizard-step" data-step="1">
+        <h3 class="w-title">Enter your info</h3>
+        <div class="grid-2">
+          <div>
+            <label class="w-label">Nick</label>
+            <input id="discordInput" class="w-input" type="text"
+                   placeholder="e.g. crpbase"
+                   autocomplete="off" autocorrect="off" autocapitalize="off"
+                   spellcheck="false" inputmode="text"/>
+            <div class="mt-8">
+              <label class="w-label">Wallet (EVM)</label>
+              <input id="walletInput" class="w-input" type="text" placeholder="0x..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+            </div>
+          </div>
+          <div>
+            <label class="w-label">Upload avatar</label>
+            <div class="w-file">
+              <input id="avatarInput" type="file" accept="image/*"/>
+              <label for="avatarInput" class="file-btn">Choose file</label>
+              <div id="fileName" class="file-name">No file chosen</div>
+            </div>
+            <label class="w-label mt-8">Preview</label>
+            <div class="avatar-preview" id="avatarPreview"></div>
+          </div>
+        </div>
+        <div class="w-actions">
+          <button class="w-btn primary" id="wNext1">Next</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Your Role -->
+      <div class="wizard-step hidden" data-step="2">
+        <h3 class="w-title">Your Role</h3>
+        <div class="role-reveal">
+          <div id="roleNotice" class="w-sub muted hidden">We couldn't find your data. Please enter manually.</div>
+          <div id="roleAutoWrap">
+            <div id="roleText" class="role-epic">...</div>
+          </div>
+
+          <div id="manualRoleWrap" class="manual hidden">
+            <label class="w-label">Select role</label>
+            <select id="roleSelect" class="w-input">
+              <option value="Plasma OG 👑">Plasma OG 👑</option>
+              <option value="SC Contributor">SC Contributor</option>
+              <option value="Early Contributor">Early Contributor</option>
+              <option value="Verified">Verified</option>
+            </select>
+          </div>
+        </div>
+        <div class="w-actions">
+          <button class="w-btn" id="wBack2">Back</button>
+          <button class="w-btn primary" id="wNext2" disabled>Next</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Joined -->
+      <div class="wizard-step hidden" data-step="3">
+        <h3 class="w-title">Joined</h3>
+        <div id="joinKnown" class="w-sub hidden">Joined Plasma discord date</div>
+        <div class="epic-date" id="joinEpic">...</div>
+        <div id="joinManual" class="manual hidden mt-8">
+          <label class="w-label">Enter date</label>
+          <input id="joinInput" class="w-input" type="date"/>
+        </div>
+        <div class="w-actions">
+          <button class="w-btn" id="wBack3">Back</button>
+          <button class="w-btn primary" id="wNext3" disabled>Next</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Trillions -->
+      <div class="wizard-step hidden" data-step="4">
+        <h3 class="w-title">Trillions</h3>
+        <div class="epic-number" id="trillionsSpin">000</div>
+        <div class="w-actions">
+          <button class="w-btn" id="wBack4">Back</button>
+          <button class="w-btn primary" id="wNext4" disabled>Next</button>
+        </div>
+      </div>
+
+      <!-- Step 5: Stablecoins % -->
+      <div class="wizard-step hidden" data-step="5">
+        <h3 class="w-title">Stablecoin share in wallet</h3>
+        <div class="w-sub" id="stableScanLabel">Scanning...</div>
+        <div class="epic-number small" id="stableShare">0.00%</div>
+        <div class="w-actions">
+          <button class="w-btn" id="wBack5">Back</button>
+          <button class="w-btn primary" id="wFinish">Finish</button>
+        </div>
+      </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

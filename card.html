@@ -247,12 +247,14 @@
     }catch(_){}
   })();
 
-  // share
-  (function(){
-    const share = document.getElementById('shareBtn');
-    const text = `My Pre-Trillions Score: ${score} — Status: ${tier}. Stablecoins: ${Number(stable).toFixed(1)}%. Built on Bitcoin - Plasma. when money moves`;
-    share.href = 'https://x.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent('https://plasma.to/');
-  })();
+   const text = [
+      'Just minted my Pre-Trillion Score',
+      `I'm a true ${tier}`,
+      '',
+      'Check how bullish on Plasma you really are: https://crpbase.github.io/Pre-Trillions-Score/',
+      '',
+      '#PreTrillionsScore'
+    ].join('\n');
 
   // legacy image copy for local file:// (contentEditable + execCommand)
 function legacyCopyImage(dataUrl){

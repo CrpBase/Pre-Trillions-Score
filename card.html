@@ -256,7 +256,7 @@ I'm a true ${tier}
 Check how bullish on Plasma you really are: https://crpbase.github.io/Pre-Trillions-Score/
 
 #PreTrillionsScore`;
-    share.href = 'https://x.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent('https://plasma.to/');
+    share.href = 'https://x.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=';
   })();
 
   // legacy image copy for local file:// (contentEditable + execCommand)
@@ -330,7 +330,7 @@ function legacyCopyImage(dataUrl){
     try { dataUrl = await exportPNG(); outImg.src = dataUrl; outImg.style.display = 'block'; } catch(_) {}
   }
   if (!dataUrl) {
-    alert('Зображення ще не готове. Спробуйте ще раз.');
+    alert('The image is not ready yet. Please try again.');
     return;
   }
 

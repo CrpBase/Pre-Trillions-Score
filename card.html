@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>YOUR PRE-TRILLIONS SCORE - Plasma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;800;900&family=Orbitron:wght@800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{ --ink:#EAF5F1; --role:#6474D2; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{ margin:0; background:#EAE7E1; color:#0A1512; font-family:Inter,system-ui,Arial; overflow-x:hidden }
+    header{ position:relative; z-index:2; text-align:center; padding:24px 16px 4px }
+    h1{ margin:0; font-family:Orbitron,Inter,sans-serif; font-weight:900; letter-spacing:.02em; font-size:clamp(28px,5vw,56px); line-height:1; text-transform:uppercase }
+    #bgCanvas{ position:fixed; inset:0; z-index:0; pointer-events:none }
+
+    main{ position:relative; z-index:1; display:grid; place-items:center; gap:14px; padding:12px 16px 40px }
+
+    /* Card styles */
+    .stage{ display:grid; place-items:center; gap:16px }
+    .card{
+      width:min(400px,92vw); height:640px; border-radius:28px; position:relative; overflow:hidden;
+      background:linear-gradient(180deg,#0A1512,#0C1E19);
+      border:2px solid rgba(220,239,234,.35);
+      box-shadow:0 24px 90px rgba(10,21,18,.45), inset 0 0 0 1px rgba(86,159,140,.18);
+      transform-style:preserve-3d; transition:transform .18s ease;
+    }
+    .card.tilted{will-change:transform}
+    .neon{position:absolute; inset:0; pointer-events:none; z-index:4}
+    .neon .glow{stroke:var(--role); stroke-width:12; filter:blur(10px); opacity:.96}
+    .neon .line{stroke:var(--role); stroke-width:4}
+    .neon .glow, .neon .line{fill:none; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:160 840}
+    @keyframes dash{to{stroke-dashoffset:-1000}}
+    .runner{animation:dash 9.6s linear infinite}
+    .r2{animation-delay:-3.2s}.r3{animation-delay:-6.4s}
+    .grid3d{
+      position:absolute; left:0; right:0; bottom:0; height:64%; z-index:1; pointer-events:none;
+      transform-origin:50% 100%; transform:perspective(900px) rotateX(58deg) translate3d(0,0,1px);
+      background:
+        repeating-linear-gradient(0deg, color-mix(in oklab, var(--role) 60%, transparent) 0 1px, transparent 1px 44px),
+        repeating-linear-gradient(90deg, color-mix(in oklab, var(--role) 60%, transparent) 0 1px, transparent 1px 44px);
+      opacity:.6; mix-blend-mode:screen;
+      -webkit-mask-image:linear-gradient(to top, #fff, transparent);
+              mask-image:linear-gradient(to top, #fff, transparent);
+    }
+    .inner{position:relative; z-index:3; height:100%; padding:16px; display:flex; flex-direction:column; color:var(--ink)}
+    .top{display:flex; justify-content:center; align-items:center}
+    .brand-wrap{display:flex; align-items:center; gap:10px}
+    .logo{width:28px; height:28px; filter:drop-shadow(0 0 6px color-mix(in oklab, var(--role) 70%, transparent))}
+    .brand{font-family:Orbitron,Inter,system-ui; font-weight:900; font-size:26px; letter-spacing:3px;
+      text-shadow:0 0 26px color-mix(in oklab, var(--role) 75%, transparent)}
+    .window-wrap{position:relative; margin-top:14px}
+    .window{height:300px; position:relative; clip-path:polygon(6% 8%,84% 8%,94% 28%,94% 70%,84% 90%,20% 90%,6% 72%)}
+    .window .bg{
+      position:absolute; inset:0;
+      background:
+        radial-gradient(closest-side at 50% 45%, rgba(0,0,0,0) 0 58%, rgba(0,0,0,.18) 59% 100%),
+        linear-gradient(180deg, color-mix(in oklab, var(--role) 16%, #0B1A28), #0B1A28);
+      box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--role) 45%, transparent);
+    }
+    .avatar{position:absolute; inset:0; display:grid; place-items:center; pointer-events:none}
+    .avatar .circle{width:230px; height:230px; border-radius:50%;
+      background:radial-gradient(circle at 50% 45%, #141c1a 0 45%, #0f1715 60% 100%);
+      box-shadow:inset 0 0 0 2px rgba(255,255,255,.06);
+    }
+    .badge-on-ava{position:absolute; left:22px; top:18px; width:45px; height:45px; border-radius:12px;
+  display:grid; place-items:center; background:linear-gradient(180deg,#16332b,#0a1a16);
+  border:1px solid rgba(255,255,255,.28); box-shadow:0 12px 24px rgba(0,0,0,.55);
+  padding:4px; overflow:hidden; transform:translateZ(8px)}
+    .badge-on-ava img{display:block; width:100%; height:100%; object-fit:contain; border-radius:9px}
+.badge-on-ava::after{content:''; position:absolute; inset:2px; border-radius:10px;
+  box-shadow:inset 0 0 18px color-mix(in oklab, var(--role) 55%, transparent);}
+    .name{width:82%; margin:12px auto; border-radius:10px; background:#0B1916; border:1px solid rgba(255,255,255,.22);
+      padding:10px 14px; text-align:center; font-weight:900; color:var(--ink)}
+    .divider{height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.36),transparent); margin:6px -8px 4px}
+    .stats{padding:10px 4px}
+    .stats .row{display:flex; justify-content:space-between; align-items:center; padding:8px 2px}
+    .stats dt{font-weight:700; opacity:.85} .stats dd{margin:0; font-weight:900}
+    .score{font-size:32px; text-shadow:0 0 48px color-mix(in oklab, var(--role) 90%, transparent)}
+
+    /* Output image for right click */
+    #pngOut{max-width:min(420px,96vw); border-radius:20px; box-shadow:0 24px 90px rgba(10,21,18,.22); display:block; margin-top:10px}
+
+    /* Bottom actions styled like site w-btn */
+    .actions{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:12px }
+    .w-btn{appearance:none; cursor:pointer; user-select:none; border-radius:12px; padding:10px 18px; font-weight:900; color:#EAF5F1; background:#0B1916; border:1px solid rgba(255,255,255,.22); position:relative; transition:transform .12s ease, box-shadow .12s ease}
+    .w-btn::after{content:''; position:absolute; inset:-2px; border-radius:14px; box-shadow:0 0 0 0 color-mix(in oklab, var(--role) 0%, transparent); transition:box-shadow .2s ease}
+    .w-btn:hover{ transform:translateY(-1px) }
+    .w-btn:hover::after{ box-shadow:0 0 0 3px color-mix(in oklab, var(--role) 60%, transparent) }
+    .w-btn.primary{ background:linear-gradient(180deg, color-mix(in oklab, var(--role) 28%, #0B1916), #0B1916); border-color: color-mix(in oklab, var(--role) 40%, rgba(255,255,255,.22)); }
+
+    footer{padding:28px 0 40px; text-align:center; color:#35534c}
+  </style>
+</head>
+<body>
+  <canvas id="bgCanvas" aria-hidden="true"></canvas>
+  <header><h1>YOUR PRE-TRILLIONS SCORE</h1></header>
+
+  <main>
+    <section class="stage">
+      <!-- Live card (used for exporting) -->
+      <article class="card tilted" id="card">
+        <div class="grid3d" id="grid"></div>
+        <svg class="neon" viewBox="0 0 400 640" preserveAspectRatio="none" aria-hidden="true">
+          <rect x="1" y="1" width="398" height="638" rx="28" ry="28" pathLength="1000" class="glow runner"></rect>
+          <rect x="1" y="1" width="398" height="638" rx="28" ry="28" pathLength="1000" class="line runner"></rect>
+          <rect x="1" y="1" width="398" height="638" rx="28" ry="28" pathLength="1000" class="glow runner r2"></rect>
+          <rect x="1" y="1" width="398" height="638" rx="28" ry="28" pathLength="1000" class="line runner r2"></rect>
+          <rect x="1" y="1" width="398" height="638" rx="28" ry="28" pathLength="1000" class="glow runner r3"></rect>
+          <rect x="1" y="1" width="398" height="638" rx="28" ry="28" pathLength="1000" class="line runner r3"></rect>
+        </svg>
+
+        <div class="inner">
+          <header class="top">
+            <div class="brand-wrap">
+              <img src="logo.png" alt="Plasma logo" class="logo"/>
+              <div class="brand">PLASMA</div>
+            </div>
+          </header>
+
+          <div class="window-wrap">
+            <div class="window">
+              <div class="bg"></div>
+              <div class="avatar"><div class="circle" id="avaCircle"></div></div>
+            </div>
+            <div class="badge-on-ava"><img id="roleBadge" alt="role badge"/></div>
+          </div>
+
+          <div class="name" id="username">username</div>
+          <div class="divider"></div>
+          <dl class="stats">
+            <div class="row"><dt>Your Score</dt><dd class="score" id="scoreNum">0</dd></div>
+            <div class="row"><dt>Stablecoins %</dt><dd id="stablePct">0</dd></div>
+            <div class="row"><dt>Status</dt><dd id="statusText">Pre-Trillions</dd></div>
+          </dl>
+        </div>
+      </article>
+
+      <!-- Right click to save (no caption) -->
+      <img id="pngOut" alt="" style="display:none"/>
+
+      <!-- Bottom actions -->
+      <div class="actions">
+        <button class="w-btn" id="downloadBtn">Copy PNG</button>
+        <a class="w-btn" id="shareBtn" target="_blank" rel="noopener">Share on X</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>to Plasma with love</footer>
+
+<script>
+  // helpers
+  function qp(key){ const u=new URL(window.location.href); return u.searchParams.get(key)||''; }
+  function roleColor(role){
+    const map = {
+      "Verified":"#99BCB6",
+      "Early Contributor":"#B57A3F",
+      "SC Contributor":"#6474D2",
+      "Community Team":"#DA1B4A",
+      "Plasma Team":"#004343",
+      "Plasma OG 👑":"#15FFC8",
+      "Plasma OG":"#15FFC8"
+    }; return map[role] || "#15FFC8";
+  }
+  function roleBadge(role){
+    const map = {
+      'Plasma OG 👑':'1.png','Plasma OG':'1.png',
+      'SC Contributor':'2.png',
+      'Early Contributor':'3.png',
+      'Community Team':'4.png',
+      'Plasma Team':'5.png',
+      'Verified':'6.png'
+    }; return map[role] || '6.png';
+  }
+  function rolePoints(role){
+    switch(role){
+      case 'Plasma Team':
+      case 'Community Team': return 1000;
+      case 'Plasma OG 👑':
+      case 'Plasma OG': return 500;
+      case 'SC Contributor': return 400;
+      case 'Early Contributor': return 300;
+      case 'Verified':
+      default: return 200;
+    }
+  }
+  function stablePoints(pct){ return Math.max(0, Math.min(500, (Number(pct)||0) * 5)); }
+  function joinBonus(joinedStr){
+    const ref = new Date(2024,9,17).getTime(); // 17.10.2024
+    let d = 0;
+    try{ const [dd,mm,yyyy] = (joinedStr||'').split('.').map(s=>parseInt(s,10)); if(yyyy){ d = new Date(yyyy,(mm||1)-1,dd||1).getTime(); } }catch(_){}
+    if(!d || d<ref) d = ref;
+    const days = (d - ref)/(1000*3600*24);
+    return Math.max(0, Math.round(100 - days/3)); // ~300 days fade
+  }
+  function computeScore(role, trillions, joinedStr, stablePct){
+    const rp = rolePoints(role);
+    const tp = Math.max(0, Number(trillions)||0);
+    const jb = joinBonus(joinedStr);
+    const sp = stablePoints(stablePct);
+    return Math.min(1000, Math.round(rp + tp + jb + sp)); // clamp to 1000
+  }
+  function tierByScore(score){
+    if(score >= 750) return 'Plasmafia';
+    if(score >= 500) return 'Plasmaphile';
+    if(score >= 250) return 'Trillions';
+    return 'Pre-Trillions';
+  }
+
+  // params
+  // Pull from URL, then fallback to localStorage payload
+  let name   = qp('name'), role = qp('role'), tri = parseFloat(qp('tri')||qp('trillions')||'NaN'), joined = qp('joined'), stable = parseFloat(qp('stable')||'NaN');
+  try{
+    if(!name || !role || !joined || !Number.isFinite(tri) || !Number.isFinite(stable)){
+      const st = JSON.parse(localStorage.getItem('plasmaCardParams')||'{}');
+      name = name || st.name || 'user';
+      role = role || st.role || 'Verified';
+      tri = Number.isFinite(tri) ? tri : (st.trillions||0);
+      joined = joined || st.joined || '17.10.2024';
+      stable = Number.isFinite(stable) ? stable : (st.stable||0);
+    }
+  }catch(_){}
+  const avatarParam = '';
+
+  // compute + fill
+  const score = computeScore(role, tri, joined, stable);
+  const tier  = tierByScore(score);
+
+  document.documentElement.style.setProperty('--role', roleColor(role));
+  document.getElementById('username').textContent = name;
+  document.getElementById('scoreNum').textContent = String(score);
+  document.getElementById('stablePct').textContent = String(stable);
+  document.getElementById('statusText').textContent = tier;
+
+  const badge = document.getElementById('roleBadge'); badge.src = roleBadge(role); badge.alt = role + ' badge';
+
+  (function setAvatar(){
+    try{
+      const dataURL = avatarParam || localStorage.getItem('plasmaAvatarDataURL') || '';
+      if (dataURL){
+        const circle = document.getElementById('avaCircle');
+        circle.style.background = `center/cover no-repeat url('${dataURL}')`;
+      }
+    }catch(_){}
+  })();
+
+  // share
+  (function(){
+    const share = document.getElementById('shareBtn');
+    const text = `Just minted my Pre-Trillion Score
+I'm a true ${tier}
+
+Check how bullish on Plasma you really are: https://crpbase.github.io/Pre-Trillions-Score/
+
+#PreTrillionsScore`;
+    share.href = 'https://x.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent('https://plasma.to/');
+  })();
+
+  // legacy image copy for local file:// (contentEditable + execCommand)
+function legacyCopyImage(dataUrl){
+  return new Promise((resolve,reject)=>{
+    try{
+      const ghost = document.createElement('div');
+      ghost.contentEditable = true;
+      ghost.style.cssText = 'position:fixed;left:-9999px;top:-9999px;';
+      const img = new Image(); img.src = dataUrl; ghost.appendChild(img);
+      document.body.appendChild(ghost); ghost.focus();
+      const range = document.createRange(); range.selectNode(img);
+      const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+      const ok = document.execCommand('copy');
+      sel.removeAllRanges(); document.body.removeChild(ghost);
+      ok ? resolve(true) : reject(new Error('execCommand failed'));
+    }catch(e){ reject(e); }
+  });
+}
+  // export PNG (hi-res) - right-clickable image shown under card
+  async function exportPNG(){
+    const el = document.getElementById('card');
+    const rect = el.getBoundingClientRect();
+    const scale = 3; // hi-res
+    const w = Math.round(rect.width * scale);
+    const h = Math.round(rect.height * scale);
+
+    const css = [...document.styleSheets].map(ss=>{ try{ return [...ss.cssRules].map(r=>r.cssText).join(''); }catch(e){ return ''; } }).join('')
+      + `:root{--role:${getComputedStyle(document.documentElement).getPropertyValue('--role')}}`;
+
+    const html = `<div id="card">${el.innerHTML}</div>`;
+    const svg = `
+<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">
+  <foreignObject width="100%" height="100%">
+    <div xmlns="http://www.w3.org/1999/xhtml">
+      <style>${css}</style>
+      <div style="width:${rect.width}px;height:${rect.height}px;transform:scale(${scale});transform-origin:0 0;background:linear-gradient(180deg,#0A1512,#0C1E19);border-radius:28px">
+        ${html}
+      </div>
+    </div>
+  </foreignObject>
+</svg>`;
+
+    const blob = new Blob([svg], {type:'image/svg+xml'});
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    const pngOut = document.getElementById('pngOut');
+
+    const png = await new Promise((resolve)=>{
+      img.onload = ()=>{
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        const ctx = c.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        URL.revokeObjectURL(url);
+        resolve(c.toDataURL('image/png'));
+      };
+      img.src = url;
+    });
+
+    pngOut.src = png; pngOut.style.display="block";
+    return png;
+  }
+
+  document.getElementById('downloadBtn').addEventListener('click', async (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  const outImg = document.getElementById('pngOut');
+  let dataUrl = outImg && outImg.src ? outImg.src : '';
+  if (!dataUrl) {
+    try { dataUrl = await exportPNG(); outImg.src = dataUrl; outImg.style.display = 'block'; } catch(_) {}
+  }
+  if (!dataUrl) {
+    alert('Зображення ще не готове. Спробуйте ще раз.');
+    return;
+  }
+
+  // 1) Modern Clipboard API (secure context only)
+  try {
+    if (window.isSecureContext && navigator.clipboard && window.ClipboardItem) {
+      const blob = await (await fetch(dataUrl)).blob();
+      await navigator.clipboard.write([ new ClipboardItem({ 'image/png': blob }) ]);
+      alert('Картинку скопійовано в буфер обміну ✅');
+      return;
+    }
+  } catch (_) { /* continue */ }
+
+  // 2) Legacy execCommand path (often works on file://)
+  try {
+    const ghost = document.createElement('div');
+    ghost.contentEditable = true;
+    ghost.style.cssText = 'position:fixed;left:-9999px;top:-9999px;';
+    const img = new Image(); img.src = dataUrl; ghost.appendChild(img);
+    document.body.appendChild(ghost); ghost.focus();
+    const range = document.createRange(); range.selectNode(img);
+    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+    const ok = document.execCommand('copy');
+    sel.removeAllRanges(); document.body.removeChild(ghost);
+    if (ok) { alert('Картинку скопійовано ✅'); return; }
+  } catch (_) { /* continue */ }
+
+  // 3) Fallback: open PNG for manual copy
+  window.open(dataUrl, '_blank');
+});
+// initial export
+  exportPNG();
+
+  // 3D tilt and parallax
+  (function(){
+    const card=document.getElementById('card');
+    const grid=document.getElementById('grid');
+    const maxTilt=22, amp=70;
+    let rect, tx=0,ty=0, x=0,y=0, raf;
+    const updateRect=()=>rect=card.getBoundingClientRect();
+    updateRect(); addEventListener('resize', updateRect);
+    function onMove(e){
+      const nx=(e.clientX-rect.left)/rect.width;
+      const ny=(e.clientY-rect.top)/rect.height;
+      const rx=(0.5-ny)*maxTilt;
+      const ry=(nx-0.5)*maxTilt*1.15;
+      card.style.transform=`rotateX(${rx}deg) rotateY(${ry}deg)`;
+      tx=(nx-0.5)*amp; ty=(ny-0.5)*amp*0.65;
+      if(!raf) raf=requestAnimationFrame(step);
+    }
+    function step(){
+      const k=.12;
+      x+= (tx-x)*k; y+= (ty-y)*k;
+      grid.style.transform=`perspective(900px) rotateX(58deg) translate3d(${x}px, ${y}px, 1px)`;
+      if(Math.abs(tx-x)>.1 || Math.abs(ty-y)>.1){ raf=requestAnimationFrame(step); } else { raf=null; }
+    }
+    function onLeave(){ tx=0; ty=0; if(!raf) raf=requestAnimationFrame(step); card.style.transform='rotateX(0) rotateY(0)'; }
+    card.addEventListener('mousemove', onMove);
+    card.addEventListener('mouseleave', onLeave);
+  })();
+
+  // flying logos bg
+  (function(){
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let W,H,DPR=Math.min(window.devicePixelRatio||1,2);
+    function res(){ W=canvas.width=Math.floor(innerWidth*DPR); H=canvas.height=Math.floor(innerHeight*DPR); canvas.style.width=innerWidth+'px'; canvas.style.height=innerHeight+'px'; }
+    res(); addEventListener('resize',res);
+    const COUNT=42, nodes=[];
+    function rand(a,b){ return Math.random()*(b-a)+a; }
+    const sprite=new Image(); let useImage=false; sprite.onload=()=>useImage=true; sprite.onerror=()=>useImage=false; sprite.src='logo.png';
+    for(let i=0;i<COUNT;i++){ nodes.push({x:Math.random()*W,y:Math.random()*H,vx:rand(-.8,.8),vy:rand(-.6,.6),r:rand(14,22),rot:rand(0,Math.PI*2),spin:rand(-.01,.01)}) }
+    function tick(){
+      ctx.clearRect(0,0,W,H);
+      for(const n of nodes){
+        n.x+=n.vx; n.y+=n.vy; n.rot+=n.spin;
+        if(n.x<-40){n.x=W+40;} else if(n.x>W+40){n.x=-40;}
+        if(n.y<-40){n.y=H+40;} else if(n.y>H+40){n.y=-40;}
+        if(useImage){ ctx.save(); ctx.translate(n.x,n.y); ctx.rotate(n.rot); ctx.globalAlpha=.9; ctx.shadowColor='#569F8C'; ctx.shadowBlur=24*DPR; const s=n.r*DPR; ctx.drawImage(sprite,-s,-s,s*2,s*2); ctx.restore(); }
+        else{ ctx.save(); ctx.globalAlpha=.7; ctx.fillStyle='#162F29'; ctx.shadowColor='#569F8C'; ctx.shadowBlur=18*DPR; ctx.beginPath(); ctx.arc(n.x,n.y,(n.r*.55)*DPR,0,Math.PI*2); ctx.fill(); ctx.restore(); }
+      }
+      requestAnimationFrame(tick);
+    }
+    tick();
+  })();
+</script>
+</body>
+</html>
